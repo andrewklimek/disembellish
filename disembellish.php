@@ -3,7 +3,7 @@
 Plugin Name: Disembellish
 Plugin URI:  https://github.com/andrewklimek/disembellish
 Description: Disable various core embellishments you may not want (emoji, capital P, archive type in page title)
-Version:     1.1.0
+Version:     1.1.1
 Author:      Andrew J Klimek
 Author URI:  https://readycat.net
 License:     GPL2
@@ -47,14 +47,14 @@ remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 /**
  * Disable smilies
  */
-foreach ( array( 'the_content', 'the_excerpt', 'the_post_thumbnail_caption', 'comment_text' ) as $filter ) {
-	$priority = has_filter( $filter, 'convert_smilies' );
-	if ( $priority !== FALSE ) {
-		remove_filter( $filter, 'convert_smilies', $priority );
-	}
-}
-
-add_filter( 'comment_text', 'convert_smilies',    20 );
+//foreach ( array( 'the_content', 'the_excerpt', 'the_post_thumbnail_caption', 'comment_text' ) as $filter ) {
+//	$priority = has_filter( $filter, 'convert_smilies' );
+//	if ( $priority !== FALSE ) {
+//		remove_filter( $filter, 'convert_smilies', $priority );
+//	}
+//}
+// This is probably the better way to do it:
+register_activation_hook( __FILE__, function(){ set_option( 'use_smilies', false ); } );
 
 
 /**
