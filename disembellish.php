@@ -54,7 +54,8 @@ remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 //	}
 //}
 // This is probably the better way to do it:
-register_activation_hook( __FILE__, function(){ set_option( 'use_smilies', false ); } );
+register_activation_hook( __FILE__, function(){ update_option( 'use_smilies', false ); } );
+register_deactivation_hook( __FILE__, function(){ update_option( 'use_smilies', true ); } );
 
 
 /**
