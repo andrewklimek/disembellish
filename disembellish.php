@@ -3,7 +3,7 @@
 Plugin Name: Disembellish
 Plugin URI:  https://github.com/andrewklimek/disembellish
 Description: Disable various core embellishments you may not want (emoji, capital P, archive type in page title)
-Version:     1.1.1
+Version:     1.3.0
 Author:      Andrew J Klimek
 Author URI:  https://readycat.net
 License:     GPL2
@@ -20,6 +20,20 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with 
 Disembellish. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
+
+/**
+ * System emails sent from admin email & blog name rather than wordpress@ and WordPress
+ */
+add_filter('wp_mail_from', function($email){
+	if( substr($email,0,10) === 'wordpress@')
+		$email = get_option('admin_email');
+	return $email;
+});
+add_filter('wp_mail_from_name', function($name){
+	if($name === 'WordPress')
+		$name = str_replace( '&#039;', "'", get_option('blogname') );
+	return $name;
+});
 
 
 /**
@@ -57,6 +71,11 @@ remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 register_activation_hook( __FILE__, function(){ update_option( 'use_smilies', false ); } );
 register_deactivation_hook( __FILE__, function(){ update_option( 'use_smilies', true ); } );
 
+/**
+ * Remove resource types - Only saves a few bytes, a waste unless you're caching the page
+ */
+add_filter( 'style_loader_tag', function( $tag ) { return str_replace( array( " type='text/css' media='all' /", "type='text/css' "), "", $tag ); } );
+add_filter( 'script_loader_tag', function( $tag ) { return str_replace( "type='text/javascript' ", "", $tag ); } );
 
 /**
  * Disable auto <p> insertion
