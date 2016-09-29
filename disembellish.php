@@ -71,11 +71,14 @@ remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 register_activation_hook( __FILE__, function(){ update_option( 'use_smilies', false ); } );
 register_deactivation_hook( __FILE__, function(){ update_option( 'use_smilies', true ); } );
 
+// Don't use role="navigation" on nav elements.  Moving this to my theme since it's actually something that would show up on an html validator
+// add_filter( 'navigation_markup_template', function($template){ return str_replace( ' role="navigation"', '', $template ); });
+
 /**
  * Remove resource types - Only saves a few bytes, a waste unless you're caching the page
  */
-add_filter( 'style_loader_tag', function( $tag ) { return str_replace( array( " type='text/css' media='all' /", "type='text/css' "), "", $tag ); } );
-add_filter( 'script_loader_tag', function( $tag ) { return str_replace( "type='text/javascript' ", "", $tag ); } );
+// add_filter( 'style_loader_tag', function( $tag ) { return str_replace( array( " type='text/css' media='all' /", "type='text/css' "), "", $tag ); } );
+// add_filter( 'script_loader_tag', function( $tag ) { return str_replace( "type='text/javascript' ", "", $tag ); } );
 
 /**
  * Disable auto <p> insertion
