@@ -5,7 +5,7 @@ Plugin URI:  https://github.com/andrewklimek/disembellish
 Description: Disable various core embellishments you may not want (emoji, capital P, archive type in page title)
 Version:     1.3.1
 Author:      Andrew J Klimek
-Author URI:  https://readycat.net
+Author URI:  https://github.com/andrewklimek
 License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
