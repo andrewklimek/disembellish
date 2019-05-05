@@ -3,9 +3,9 @@
 Plugin Name: Disembellish
 Plugin URI:  https://github.com/andrewklimek/disembellish
 Description: Disable various core embellishments you may not want (emoji, capital P, archive type in page title)
-Version:     1.3.1
+Version:     1.4.1
 Author:      Andrew J Klimek
-Author URI:  https://github.com/andrewklimek
+Author URI:  https://andrewklimek.com
 License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,32 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with 
 Disembellish. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
+
+
+
+/**
+ * Remove <meta name="generator" content="WordPress {version}">
+ */
+// add_filter('get_the_generator_xhtml', '__return_empty_string');
+// use the above filter if this messes up rss or other types.
+remove_action( 'wp_head', 'wp_generator' );
+
+/**
+ * Remove big un-used css from front end added by WP 5 for the block editor
+ */
+function disable_gutenberg_block_css() {
+	wp_dequeue_style( 'wp-block-library' );
+}
+add_action( 'wp_enqueue_scripts', 'disable_gutenberg_block_css', 999 );
+
+
+/**
+ * Replace "Powered by Wordpress" H1 on login page
+ */
+add_filter('login_headerurl', function(){ return home_url(); });
+add_filter('login_headertitle', function(){ return get_bloginfo( 'name', 'display' ); });
+
+
 
 /**
  * System emails sent from admin email & blog name rather than wordpress@ and WordPress
@@ -57,6 +83,8 @@ remove_action( 'admin_print_styles', 'print_emoji_styles' );
 remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
 remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
 remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+add_filter( 'emoji_svg_url', '__return_null' );
+
 
 /**
  * Disable smilies
@@ -88,14 +116,29 @@ register_deactivation_hook( __FILE__, function(){ update_option( 'use_smilies', 
 //remove_filter( 'the_excerpt', 'wpautop' );
 
 
-/**
- * Remove "Category:" or "Author:" or ETC from archive page titles
- */
-function remove_type_from_archive_title( $title ){
-	$pos = strpos( $title, ': ' );
-	if ( $pos ) {
-		$title = substr( $title, 2 + $pos );
-	}
-	return $title;
+// remove wp-embed
+function disable_embeds_code_init() {
+
+// Remove the REST API endpoint.
+remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+
+// Turn off oEmbed auto discovery.
+add_filter( 'embed_oembed_discover', '__return_false' );
+
+// Don't filter oEmbed results.
+remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
+
+// Remove oEmbed discovery links.
+remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+
+// Remove oEmbed-specific JavaScript from the front-end and back-end.
+remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+// add_filter( 'tiny_mce_plugins', 'disable_embeds_tiny_mce_plugin' );
+
+// Remove all embeds rewrite rules.
+// add_filter( 'rewrite_rules_array', 'disable_embeds_rewrites' );
+
+// Remove filter of the oEmbed result before any HTTP requests are made.
+remove_filter( 'pre_oembed_result', 'wp_filter_pre_oembed_result', 10 );
 }
-// add_filter( 'get_the_archive_title', 'remove_type_from_archive_title' );
+add_action( 'init', 'disable_embeds_code_init', 9999 );
