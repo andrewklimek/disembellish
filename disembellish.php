@@ -3,7 +3,7 @@
 Plugin Name: Disembellish
 Plugin URI:  https://github.com/andrewklimek/disembellish
 Description: Disable various core embellishments you may not want (emoji, capital P, archive type in page title)
-Version:     1.4.1
+Version:     1.4.2
 Author:      Andrew J Klimek
 Author URI:  https://andrewklimek.com
 License:     GPL2
@@ -22,11 +22,20 @@ Disembellish. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
 
 
+/**
+ * Remove link to Windows Live Writer manifest file <link rel="wlwmanifest" type="application/wlwmanifest+xml">
+ */
+remove_action( 'wp_head', 'wlwmanifest_link' );
+
+/**
+ * Remove link to comments feed <link rel="alternate" type="application/rss+xml">
+ */
+add_filter( 'feed_links_show_comments_feed', function(){ return false; } );
 
 /**
  * Remove <meta name="generator" content="WordPress {version}">
  */
-// add_filter('get_the_generator_xhtml', '__return_empty_string');
+// add_filter('get_the_generator_xhtml', function(){ return ''; } );
 // use the above filter if this messes up rss or other types.
 remove_action( 'wp_head', 'wp_generator' );
 
@@ -83,7 +92,7 @@ remove_action( 'admin_print_styles', 'print_emoji_styles' );
 remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
 remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
 remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
-add_filter( 'emoji_svg_url', '__return_null' );
+add_filter( 'emoji_svg_url', function(){ return false; } );
 
 
 /**
@@ -123,7 +132,7 @@ function disable_embeds_code_init() {
 remove_action( 'rest_api_init', 'wp_oembed_register_route' );
 
 // Turn off oEmbed auto discovery.
-add_filter( 'embed_oembed_discover', '__return_false' );
+add_filter( 'embed_oembed_discover', function(){ return false; } );
 
 // Don't filter oEmbed results.
 remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
